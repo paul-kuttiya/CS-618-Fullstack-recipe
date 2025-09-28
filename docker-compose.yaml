@@ -1,0 +1,27 @@
+version: '3.9'
+services:
+  app-database:
+    image: mongo
+    ports:
+      - '27017:27017'
+
+  app-backend:
+    build: backend/
+    environment:
+      - PORT=3001
+      - DATABASE_URL=mongodb://app-database:27017/app
+      - JWT_SECRET=${JWT_SECRET}
+    ports:
+      - '3001:3001'
+    depends_on:
+      - app-database
+
+  app-frontend:
+    build:
+      context: .
+      args:
+        VITE_BACKEND_URL: ${VITE_BACKEND_URL}
+    ports:
+      - '3000:80'
+    depends_on:
+      - app-backend
