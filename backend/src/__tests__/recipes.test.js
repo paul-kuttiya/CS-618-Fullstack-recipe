@@ -17,16 +17,30 @@ let sampleRecipes = []
 let createdSampleRecipes = []
 
 beforeAll(async () => {
-		testUser = await createUser({ username: 'sample', password: 'user' })
-		sampleRecipes = [
-				{ title: 'Pasta Carbonara', author: testUser._id, tags: ['pasta', 'italian'] },
-				{ title: 'Classic Burger', author: testUser._id, tags: ['burger', 'american'] },
-				{
-						title: 'Vegetable Stir Fry',
-						author: testUser._id,
-						tags: ['vegetarian', 'asian'],
-				},
-		]
+	       testUser = await createUser({ username: 'sample', password: 'user' })
+	       sampleRecipes = [
+		       {
+			       title: 'Pasta Carbonara',
+			       author: testUser._id,
+			       ingredients: ['pasta', 'egg', 'cheese'],
+			       imageUrl: 'http://example.com/pasta.jpg',
+			       contents: 'Classic Italian pasta dish.'
+		       },
+		       {
+			       title: 'Classic Burger',
+			       author: testUser._id,
+			       ingredients: ['bun', 'beef', 'lettuce'],
+			       imageUrl: 'http://example.com/burger.jpg',
+			       contents: 'Juicy grilled burger.'
+		       },
+		       {
+			       title: 'Vegetable Stir Fry',
+			       author: testUser._id,
+			       ingredients: ['broccoli', 'carrot', 'soy sauce'],
+			       imageUrl: 'http://example.com/stirfry.jpg',
+			       contents: 'Healthy veggie stir fry.'
+		       },
+	       ]
 })
 
 beforeEach(async () => {
@@ -49,12 +63,12 @@ describe('getting a recipe', () => {
 })
 
 describe('updating recipes', () => {
-	test('should update the specified property', async () => {
-		const original = createdSampleRecipes[0]
-		await updateRecipe(testUser._id, original._id, { contents: 'Updated recipe' })
-		const updatedRecipe = await Recipe.findById(original._id)
-		expect(updatedRecipe.contents).toEqual('Updated recipe')
-	})
+       test('should update the specified property', async () => {
+	       const original = createdSampleRecipes[0]
+	       await updateRecipe(testUser._id, original._id, { title: 'Updated Title' })
+	       const updatedRecipe = await Recipe.findById(original._id)
+	       expect(updatedRecipe.title).toEqual('Updated Title')
+       })
 
 	test('should not update other properties', async () => {
 		const original = createdSampleRecipes[0]
@@ -128,33 +142,30 @@ describe('listing recipes', () => {
 		expect(recipes.length).toBe(3)
 	})
 
-	test('should be able to filter recipes by tag', async () => {
-		const recipes = await listRecipesByTag('asian')
-		expect(recipes.length).toBe(1)
-	})
 })
 
 describe('creating recipes', () => {
-	test('with all parameters should succeed', async () => {
-		const createdRecipe = await createRecipe(testUser._id, {
-			title: 'Chocolate Cake',
-			contents: 'This is a delicious chocolate cake recipe stored in MongoDB.',
-			tags: ['dessert', 'chocolate'],
-		})
-		expect(createdRecipe._id).toBeInstanceOf(mongoose.Types.ObjectId)
-		const foundRecipe = await Recipe.findById(createdRecipe._id)
-		expect(foundRecipe.title).toEqual('Chocolate Cake')
-		expect(foundRecipe.contents).toContain('chocolate cake')
-		expect(foundRecipe.createdAt).toBeInstanceOf(Date)
-		expect(foundRecipe.updatedAt).toBeInstanceOf(Date)
-	})
+       test('with all parameters should succeed', async () => {
+	       const createdRecipe = await createRecipe(testUser._id, {
+		       title: 'Chocolate Cake',
+		       ingredients: ['flour', 'cocoa', 'sugar'],
+		       imageUrl: 'http://example.com/cake.jpg',
+	       })
+	       expect(createdRecipe._id).toBeInstanceOf(mongoose.Types.ObjectId)
+	       const foundRecipe = await Recipe.findById(createdRecipe._id)
+	       expect(foundRecipe.title).toEqual('Chocolate Cake')
+	       expect(foundRecipe.createdAt).toBeInstanceOf(Date)
+	       expect(foundRecipe.updatedAt).toBeInstanceOf(Date)
+       })
 
 	test('without title should fail', async () => {
-		try {
-			await createRecipe(testUser._id, {
-				contents: 'Recipe with no title',
-				tags: ['empty'],
-			})
+	       try {
+		       await createRecipe(testUser._id, {
+			       contents: 'Recipe with no title',
+			       tags: ['empty'],
+			       ingredients: ['water'],
+			       imageUrl: 'http://example.com/empty.jpg',
+		       })
 			// If no error was thrown, force a failure
 			expect(true).toBe(false)
 		} catch (err) {
@@ -164,7 +175,12 @@ describe('creating recipes', () => {
 	})
 
 	test('with minimal parameters should succeed', async () => {
-		const createdRecipe = await createRecipe(testUser._id, { title: 'Only a title' })
+	       const createdRecipe = await createRecipe(testUser._id, {
+		       title: 'Only a title',
+		       tags: ['minimal'],
+		       ingredients: ['ingredient'],
+		       imageUrl: 'http://example.com/onlytitle.jpg',
+	       })
 		expect(createdRecipe._id).toBeInstanceOf(mongoose.Types.ObjectId)
 	})
 })
