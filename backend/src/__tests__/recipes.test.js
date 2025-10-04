@@ -4,7 +4,6 @@ import {
 		createRecipe,
 		listAllRecipes,
 		listRecipesByAuthor,
-		listRecipesByTag,
 		getRecipeById,
 		updateRecipe,
 		deleteRecipe,
