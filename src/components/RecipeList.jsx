@@ -3,13 +3,18 @@ import PropTypes from 'prop-types'
 import { Recipe } from './Recipe.jsx'
 
 export function RecipeList({ recipes = [] }) {
+  const containerStyle = {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))',
+    gap: 12,
+  }
+
   return (
-    <div>
+    <div style={containerStyle}>
       {recipes.map((recipe) => (
-        <Fragment key={recipe._id ?? recipe.title}>
+        <div key={recipe._id ?? recipe.title}>
           <Recipe {...recipe} />
-          <hr />
-        </Fragment>
+        </div>
       ))}
     </div>
   )
