@@ -1,10 +1,12 @@
 import { Recipe } from '../db/models/recipe.js'
 import { User } from '../db/models/user.js'
 
-export async function createRecipe(userId, { title, author, contents, tags }) {
-		console.log('Author: ', author)
-		const recipe = new Recipe({ title, author: userId, contents, tags })
-		return await recipe.save()
+export async function createRecipe(userId, { title, ingredients, imageUrl }) {
+	// Normalize ingredients if provided as a single string
+	if (typeof ingredients === 'string') ingredients = [ingredients]
+
+	const recipe = new Recipe({ title, author: userId, ingredients, imageUrl })
+	return await recipe.save()
 }
 
 async function listRecipes(
@@ -32,12 +34,13 @@ export async function getRecipeById(recipeId) {
   return await Recipe.findById(recipeId)
 }
 
-export async function updateRecipe(userId, recipeId, { title, author, contents, tags }) {
-		return await Recipe.findOneAndUpdate(
-				{ _id: recipeId, author: userId },
-				{ $set: { title, author, contents, tags } },
-				{ new: true },
-		)
+export async function updateRecipe(userId, recipeId, { title, ingredients, imageUrl }) {
+	if (typeof ingredients === 'string') ingredients = [ingredients]
+	return await Recipe.findOneAndUpdate(
+		{ _id: recipeId, author: userId },
+		{ $set: { title, ingredients, imageUrl } },
+		{ new: true },
+	)
 }
 
 export async function deleteRecipe(userId, recipeId) {

@@ -45,11 +45,15 @@ export function recipesRoutes(app) {
 
   app.post('/api/v1/recipes', requireAuth, async (req, res) => {
 		try {
-				const recipe = await createRecipe(req.auth.sub, req.body)
-				return res.json(recipe)
+        const recipe = await createRecipe(req.auth.sub, req.body)
+        return res.json(recipe)
 		} catch (err) {
-				console.error('error creating recipe', err)
-				return res.status(500).end()
+        console.error('error creating recipe', err)
+        // Mongoose validation error -> return 400 with details
+        if (err.name === 'ValidationError') {
+          return res.status(400).json({ error: err.message })
+        }
+        return res.status(500).end()
 		}
   })
 
