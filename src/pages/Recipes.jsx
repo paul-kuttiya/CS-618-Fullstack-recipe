@@ -9,11 +9,14 @@ import { getRecipes } from '../api/recipes.js'
 
 export function Recipes() {
 		const [author, setAuthor] = useState('')
-		const [sortBy, setSortBy] = useState('createdAt')
+		const [sortBy, setSortBy] = useState('likes')
 		const [sortOrder, setSortOrder] = useState('descending')
+		
 		const recipesQuery = useQuery({
 				queryKey: ['recipes', { author, sortBy, sortOrder }],
 				queryFn: () => getRecipes({ author, sortBy, sortOrder }),
+				placeholderData: (previousData) => previousData,
+				refetchOnWindowFocus: false,
 		})
 		const recipes = recipesQuery.data ?? []
 
@@ -34,11 +37,8 @@ export function Recipes() {
 						/>
 						<br />
 						<RecipeSorting
-							fields={['createdAt', 'updatedAt']}
-							value={sortBy}
-							onChange={(value) => setSortBy(value)}
-							orderValue={sortOrder}
-							onOrderChange={(orderValue) => setSortOrder(orderValue)}
+							sortOrder={sortOrder}
+							onSort={(order) => setSortOrder(order)}
 						/>
 						<hr />
 						<RecipeList recipes={recipes} />

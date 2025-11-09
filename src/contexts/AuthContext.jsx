@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useState, useContext } from 'react'
+import { createContext, useState, useContext, useEffect } from 'react'
 import PropTypes from 'prop-types'
 export const AuthContext = createContext({
 	token: null,
@@ -7,7 +7,20 @@ export const AuthContext = createContext({
 })
 
 export const AuthContextProvider = ({ children }) => {
-	const [token, setToken] = useState(null)
+	const [token, setTokenState] = useState(() => {
+		// Initialize token from localStorage
+		return localStorage.getItem('authToken')
+	})
+
+	const setToken = (newToken) => {
+		setTokenState(newToken)
+		if (newToken) {
+			localStorage.setItem('authToken', newToken)
+		} else {
+			localStorage.removeItem('authToken')
+		}
+	}
+
 	return (
 		<AuthContext.Provider value={{ token, setToken }}>
 			{children}

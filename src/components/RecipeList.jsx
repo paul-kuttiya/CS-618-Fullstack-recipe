@@ -13,7 +13,7 @@ export function RecipeList({ recipes = [] }) {
     <div style={containerStyle}>
       {recipes.map((recipe) => (
         <div key={recipe._id ?? recipe.title}>
-          <Recipe {...recipe} />
+          <Recipe recipe={recipe} />
         </div>
       ))}
     </div>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate, Link } from 'react-router-dom'
 import { login } from '../api/users.js'
 import { useAuth } from '../contexts/AuthContext.jsx'
@@ -9,10 +9,13 @@ export function Login() {
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
 	const navigate = useNavigate()
+	const queryClient = useQueryClient()
 	const loginMutation = useMutation({
 		mutationFn: () => login({ username, password }),
 		onSuccess: (data) => {
 			setToken(data.token)
+			// Invalidate all queries to fetch fresh data for the new user
+			queryClient.invalidateQueries()
 			navigate('/')
 		},
 		onError: () => alert('failed to login!'),
