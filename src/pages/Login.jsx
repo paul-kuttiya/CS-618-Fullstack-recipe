@@ -14,6 +14,20 @@ export function Login() {
 		mutationFn: () => login({ username, password }),
 		onSuccess: (data) => {
 			setToken(data.token)
+			
+			// Pre-cache the user info and store in localStorage to avoid loading state
+			try {
+				const payload = JSON.parse(atob(data.token.split('.')[1]))
+				if (payload.sub) {
+					const userInfo = { username }
+					queryClient.setQueryData(['users', payload.sub], userInfo)
+					// Store username in localStorage for immediate display on reload
+					localStorage.setItem(`user_${payload.sub}`, JSON.stringify(userInfo))
+				}
+			} catch (error) {
+				console.error('Failed to cache user info:', error)
+			}
+			
 			// Invalidate all queries to fetch fresh data for the new user
 			queryClient.invalidateQueries()
 			navigate('/')
