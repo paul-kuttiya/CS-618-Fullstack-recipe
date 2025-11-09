@@ -1,46 +1,38 @@
 import PropTypes from 'prop-types'
+import { FaArrowUp, FaArrowDown } from 'react-icons/fa'
 
-export function RecipeSorting({
-  fields = [],
-  value,
-  onChange,
-  orderValue,
-  onOrderChange,
-}) {
-  return (
-    <div>
-      <label htmlFor='sortBy'>Sort By: </label>
-      <select
-        name='sortBy'
-        id='sortBy'
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-      >
-        {fields.map((field) => (
-          <option key={field} value={field}>
-            {field}
-          </option>
-        ))}
-      </select>
-      {' / '}
-      <label htmlFor='sortOrder'>Sort Order: </label>
-      <select
-        name='sortOrder'
-        id='sortOrder'
-        value={orderValue}
-        onChange={(e) => onOrderChange(e.target.value)}
-      >
-        <option value={'ascending'}>ascending</option>
-        <option value={'descending'}>descending</option>
-      </select>
-    </div>
-  )
+export function RecipeSorting({ sortOrder, onSort }) {
+	const buttonStyle = {
+		display: 'flex',
+		alignItems: 'center',
+		gap: '8px',
+		padding: '8px 12px',
+		border: '1px solid #ccc',
+		borderRadius: '6px',
+		background: 'white',
+		cursor: 'pointer',
+		fontSize: '0.9rem',
+	}
+
+	const handleSort = () => {
+		if (sortOrder === 'descending') {
+			onSort('ascending')
+		} else {
+			onSort('descending')
+		}
+	}
+
+	return (
+		<div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
+			<button style={buttonStyle} onClick={handleSort}>
+				<span>Sort by Likes</span>
+				{sortOrder === 'descending' ? <FaArrowUp /> : <FaArrowDown />}
+			</button>
+		</div>
+	)
 }
 
 RecipeSorting.propTypes = {
-  fields: PropTypes.arrayOf(PropTypes.string).isRequired,
-  value: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
-  orderValue: PropTypes.string.isRequired,
-  onOrderChange: PropTypes.func.isRequired,
+	sortOrder: PropTypes.oneOf(['ascending', 'descending']).isRequired,
+	onSort: PropTypes.func.isRequired,
 }

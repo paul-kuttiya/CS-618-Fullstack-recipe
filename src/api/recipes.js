@@ -20,3 +20,36 @@ export const createRecipe = async (token, recipe) => {
     )
     return await res.json()
 }
+
+export const checkLikeStatus = async (token, recipeId) => {
+	const res = await fetch(
+		`${import.meta.env.VITE_BACKEND_URL}/recipes/${recipeId}/like`,
+		{
+			method: 'GET',
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		},
+	)
+	return await res.json()
+}
+
+export const getRecipeById = async (recipeId) => {
+	const res = await fetch(
+		`${import.meta.env.VITE_BACKEND_URL}/recipes/${recipeId}`,
+	)
+	return await res.json()
+}
+
+export const toggleLike = async (token, recipeId) => {
+	const res = await fetch(
+		`${import.meta.env.VITE_BACKEND_URL}/recipes/${recipeId}/like`,
+		{
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		},
+	)
+	return await res.json()
+}
