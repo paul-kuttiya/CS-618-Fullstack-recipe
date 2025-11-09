@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext.jsx'
 import { toggleLike, checkLikeStatus } from '../api/recipes.js'
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 
 export function Recipe({ recipe }) {
 	const {
@@ -17,6 +18,7 @@ export function Recipe({ recipe }) {
 	const [token] = useAuth()
 	const [likes, setLikes] = useState(initialLikes)
 	const [isLiked, setIsLiked] = useState(false)
+	const queryClient = useQueryClient()
 
 	// Check if user has already liked this recipe
 	useEffect(() => {
@@ -66,6 +68,18 @@ export function Recipe({ recipe }) {
 				const next = result.liked ? prev + 1 : prev - 1
 				return next < 0 ? 0 : next
 			})
+			
+			// Update all cached recipe lists to reflect new like count
+			queryClient.setQueriesData({ queryKey: ['recipes'] }, (oldData) => {
+				if (!oldData || !Array.isArray(oldData)) return oldData
+				return oldData.map((r) => {
+					if (r._id === recipe._id) {
+						const newLikes = result.liked ? (r.likes ?? 0) + 1 : (r.likes ?? 0) - 1
+						return { ...r, likes: newLikes < 0 ? 0 : newLikes }
+					}
+					return r
+				})
+			})
 		} catch (error) {
 			console.error('Failed to toggle like:', error)
 			alert('Something went wrong. Please try again.')
@@ -87,7 +101,6 @@ export function Recipe({ recipe }) {
 		transition: 'box-shadow 0.2s',
 	}
 
-	// Removed unused cardHoverStyle; hover handled via CSS could be added separately.
 	const imgStyle = {
 		width: 120,
 		height: 120,

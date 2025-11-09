@@ -3,12 +3,15 @@ import { useQuery } from '@tanstack/react-query'
 import { Header } from '../components/Header.jsx'
 import RecipeDetail from '../components/RecipeDetail.jsx'
 import { getRecipeById } from '../api/recipes.js'
+import { useAuth } from '../contexts/AuthContext.jsx'
 
 export function ViewRecipe() {
   const { recipeId } = useParams()
+  const [token] = useAuth()
 
   const recipeQuery = useQuery({
-    queryKey: ['recipe', recipeId],
+    // Include token to bust cache when switching users
+    queryKey: ['recipe', recipeId, token ? 'authed' : 'anon'],
     queryFn: () => getRecipeById(recipeId),
   })
   const recipe = recipeQuery.data

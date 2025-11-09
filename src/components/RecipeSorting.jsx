@@ -14,7 +14,8 @@ export function RecipeSorting({ sortOrder, onSort }) {
 		fontSize: '0.9rem',
 	}
 
-	const handleSort = () => {
+	const handleSort = (e) => {
+		e.preventDefault()
 		if (sortOrder === 'descending') {
 			onSort('ascending')
 		} else {
@@ -24,7 +25,7 @@ export function RecipeSorting({ sortOrder, onSort }) {
 
 	return (
 		<div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
-			<button style={buttonStyle} onClick={handleSort}>
+			<button type="button" style={buttonStyle} onClick={handleSort}>
 				<span>Sort by Likes</span>
 				{sortOrder === 'descending' ? <FaArrowUp /> : <FaArrowDown />}
 			</button>

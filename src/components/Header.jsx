@@ -3,13 +3,21 @@ import { User } from './User.jsx'
 import { jwtDecode } from 'jwt-decode'
 import { useAuth } from '../contexts/AuthContext.jsx'
 import { useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 
 export function Header() {
 	const [token, setToken] = useAuth()
 	const [open, setOpen] = useState(false)
+	const queryClient = useQueryClient()
 
 	const handleToggle = () => setOpen((v) => !v)
 	const handleClose = () => setOpen(false)
+
+	const handleLogout = () => {
+		setToken(null)
+		// Invalidate all queries to clear cached data
+		queryClient.invalidateQueries()
+	}
 
 	if (token) {
 		const { sub } = jwtDecode(token)
@@ -29,7 +37,7 @@ export function Header() {
 				{open && (
 					<nav className="dropdown" onClick={handleClose}>
 						<div>Logged in as <User id={sub} /></div>
-						<button onClick={() => setToken(null)}>Logout</button>
+						<button onClick={handleLogout}>Logout</button>
 					</nav>
 				)}
 			</header>

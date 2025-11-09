@@ -6,17 +6,21 @@ import { Header } from '../components/Header.jsx'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getRecipes } from '../api/recipes.js'
+import { useAuth } from '../contexts/AuthContext.jsx'
 
 export function Recipes() {
 		const [author, setAuthor] = useState('')
 		const [sortBy, setSortBy] = useState('likes')
 		const [sortOrder, setSortOrder] = useState('descending')
+		const [token] = useAuth()
 		
 		const recipesQuery = useQuery({
-				queryKey: ['recipes', { author, sortBy, sortOrder }],
+				// Include token to bust cache when switching users
+				queryKey: ['recipes', { author, sortBy, sortOrder }, token ? 'authed' : 'anon'],
 				queryFn: () => getRecipes({ author, sortBy, sortOrder }),
-				placeholderData: (previousData) => previousData,
 				refetchOnWindowFocus: false,
+				staleTime: 0, // Always refetch to ensure fresh data
+				placeholderData: (previousData) => previousData, // Keep previous data while fetching to prevent layout shift
 		})
 		const recipes = recipesQuery.data ?? []
 
