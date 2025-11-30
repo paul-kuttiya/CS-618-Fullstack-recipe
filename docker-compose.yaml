@@ -21,6 +21,7 @@ services:
       context: .
       args:
         VITE_BACKEND_URL: ${VITE_BACKEND_URL}
+        VITE_SOCKET_HOST: ${VITE_SOCKET_HOST}
     ports:
       - '3000:80'
     depends_on:
