@@ -1,0 +1,60 @@
+.notification-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #2196f3;
+  color: black;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.notification-banner span {
+  flex: 1;
+  font-size: 16px;
+}
+
+.notification-banner a {
+  color: black;
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+.notification-banner a:hover {
+  color: #1565c0;
+}
+
+.notification-banner .close-btn {
+  background: none;
+  border: none;
+  color: black;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 16px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.notification-banner .close-btn:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
